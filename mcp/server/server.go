@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package server
 
 import (
@@ -42,6 +41,12 @@ func New(cli cluster.Client) *mcp.Server {
 			"Kmesh runs one daemon per node, so this answers for the whole mesh and " +
 			"names any daemon that did not respond.",
 	}, tools.Version(cli))
+
+	mcp.AddTool(s, &mcp.Tool{
+		Name: "kmesh_mesh_namespaces",
+		Description: "List the namespaces enrolled in the kmesh service mesh, with the " +
+			"dataplane mode each is labelled for.",
+	}, tools.MeshNamespaces(cli))
 
 	return s
 }
