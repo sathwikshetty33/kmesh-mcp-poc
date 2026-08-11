@@ -55,7 +55,7 @@ func askVersions(t *testing.T, c *fake.Cluster) *cluster.Fleet[versionInfo] {
 			var v versionInfo
 			err := cluster.Fetch(ctx, c, d.Pod, "/version", &v)
 			return v, err
-		})
+		}, "")
 	if err != nil {
 		t.Fatalf("Ask: %v", err)
 	}

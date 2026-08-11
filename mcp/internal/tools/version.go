@@ -32,7 +32,9 @@ import (
 // restated here.
 const routeVersion = "/version"
 
-type VersionArgs struct{}
+type VersionArgs struct {
+	PodName string `json:"pod_name,omitempty" jsonschema:"name of a single kmesh daemon pod; omit to ask every daemon in the cluster"`
+}
 
 // VersionResult is every daemon's version, and whichever daemons did not answer.
 type VersionResult struct {
@@ -45,12 +47,12 @@ type VersionResult struct {
 
 // Version reports the version of every kmesh daemon in the cluster.
 func Version(cli cluster.Client) mcp.ToolHandlerFor[VersionArgs, VersionResult] {
-	return func(ctx context.Context, _ *mcp.CallToolRequest, _ VersionArgs) (*mcp.CallToolResult, VersionResult, error) {
+	return func(ctx context.Context, _ *mcp.CallToolRequest, args VersionArgs) (*mcp.CallToolResult, VersionResult, error) {
 		fleet, err := cluster.Ask(ctx, cli, func(ctx context.Context, d cluster.Daemon) (version.Info, error) {
 			var info version.Info
 			err := cluster.Fetch(ctx, cli, d.Pod, routeVersion, &info)
 			return info, err
-		})
+		}, args.PodName)
 		if err != nil {
 			return nil, VersionResult{}, err
 		}
@@ -102,6 +104,9 @@ func summarise[T any](f *cluster.Fleet[T]) string {
 		return fmt.Sprintf("no kmesh daemon pods found in namespace %s", cluster.Namespace)
 	}
 	if f.Complete() {
+		if total == 1 {
+			return "the daemon answered"
+		}
 		return fmt.Sprintf("all %d daemons answered", total)
 	}
 	unreachable := len(f.Unreachable)

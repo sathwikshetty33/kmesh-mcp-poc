@@ -44,7 +44,8 @@ type loggerInfo struct {
 }
 
 type LoggersArgs struct {
-	Name string `json:"name,omitempty" jsonschema:"logger name; omit to list every logger the daemons have"`
+	Name    string `json:"name,omitempty" jsonschema:"logger name; omit to list every logger the daemons have"`
+	PodName string `json:"pod_name,omitempty" jsonschema:"name of a single kmesh daemon pod; omit to ask every daemon in the cluster"`
 }
 
 // LoggerState is one daemon's answer: every logger it has, with its level.
@@ -89,7 +90,7 @@ func Loggers(cli cluster.Client) mcp.ToolHandlerFor[LoggersArgs, LoggersResult] 
 				levels[name] = info.Level
 			}
 			return LoggerState{Levels: levels}, nil
-		})
+		}, args.PodName)
 		if err != nil {
 			return nil, LoggersResult{}, err
 		}

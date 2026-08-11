@@ -69,10 +69,17 @@ func (f Fleet[T]) Complete() bool {
 }
 
 // Runs fn against every reachable daemon and collects an answer or an error
-// for each. It returns an error only if the daemons could not be listed at all;
-// a daemon that fails is a result, not an error.
-func Ask[T any](ctx context.Context, cli Client, fn func(context.Context, Daemon) (T, error)) (*Fleet[T], error) {
-	d, err := Discover(ctx, cli)
+// for each. Naming a pod narrows it to that one daemon. It returns an error
+// only if the daemons could not be listed at all; a daemon that fails is a
+// result, not an error.
+func Ask[T any](ctx context.Context, cli Client, fn func(context.Context, Daemon) (T, error), podName string) (*Fleet[T], error) {
+	var d *Discovery
+	var err error
+	if podName == "" {
+		d, err = Discover(ctx, cli)
+	} else {
+		d, err = DiscoverOne(ctx, cli, podName)
+	}
 	if err != nil {
 		return nil, err
 	}
