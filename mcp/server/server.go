@@ -43,6 +43,13 @@ func New(cli cluster.Client) *mcp.Server {
 	}, tools.Version(cli))
 
 	mcp.AddTool(s, &mcp.Tool{
+		Name: "kmesh_loggers",
+		Description: "Report kmesh daemon log levels across the cluster. Without a logger " +
+			"name it lists the loggers each daemon has; with one it reports that logger's " +
+			"level on every daemon, and says so when the levels disagree.",
+	}, tools.Loggers(cli))
+
+	mcp.AddTool(s, &mcp.Tool{
 		Name: "kmesh_mesh_namespaces",
 		Description: "List the namespaces enrolled in the kmesh service mesh, with the " +
 			"dataplane mode each is labelled for.",
