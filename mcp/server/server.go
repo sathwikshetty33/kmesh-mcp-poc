@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+
 package server
 
 import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"kmesh.net/kmesh/mcp/internal/cluster"
+	"kmesh.net/kmesh/mcp/internal/tools"
 )
 
 const (
@@ -33,6 +35,13 @@ func New(cli cluster.Client) *mcp.Server {
 		Version: Version,
 		Title:   "Kmesh",
 	}, nil)
+
+	mcp.AddTool(s, &mcp.Tool{
+		Name: "kmesh_version",
+		Description: "Report the build version of every kmesh daemon in the cluster. " +
+			"Kmesh runs one daemon per node, so this answers for the whole mesh and " +
+			"names any daemon that did not respond.",
+	}, tools.Version(cli))
 
 	return s
 }
