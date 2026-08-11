@@ -26,12 +26,14 @@ import (
 	"log"
 	"net/http"
 
+	"kmesh.net/kmesh/mcp/internal/auth"
 	"kmesh.net/kmesh/mcp/internal/cluster"
 	"kmesh.net/kmesh/mcp/server"
 )
 
 func main() {
-	listen := flag.String("listen", ":8080", "address to serve MCP on")
+
+	listen := flag.String("listen", "localhost:8080", "address to serve MCP on")
 	flag.Parse()
 
 	// Credentials are resolved by client-go, exactly as for kmeshctl: KUBECONFIG,
@@ -41,8 +43,10 @@ func main() {
 		log.Fatalf("building kubernetes client: %v", err)
 	}
 
+	handler := server.RequireToken(server.Handler(server.New(cli)), auth.Verifier(cli))
+
 	mux := http.NewServeMux()
-	mux.Handle(server.Path, server.Handler(server.New(cli)))
+	mux.Handle(server.Path, handler)
 
 	log.Printf("%s %s serving on %s%s", server.Name, server.Version, *listen, server.Path)
 	if err := (&http.Server{Addr: *listen, Handler: mux}).ListenAndServe(); err != nil {
