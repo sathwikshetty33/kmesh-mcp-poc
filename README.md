@@ -1,3 +1,12 @@
+> **This is a copy of [kmesh-net/kmesh](https://github.com/kmesh-net/kmesh), not the
+> upstream project.** Everything outside `mcp/` is Kmesh's own work, unmodified and
+> under its original Apache 2.0 licence. The only addition is [`mcp/`](mcp/), a
+> proof-of-concept MCP server built towards
+> [kmesh-net/kmesh#1800](https://github.com/kmesh-net/kmesh/issues/1800). Start at
+> [mcp/README.md](mcp/README.md). Report Kmesh issues upstream, not here.
+
+---
+
 <img src="docs/pics/logo/KMESH-horizontal-colour.png" alt="kmesh-logo" style="zoom: 100%;" />
 
 [![LICENSE](https://img.shields.io/github/license/kmesh-net/kmesh)](/LICENSE) [![codecov](https://codecov.io/gh/kmesh-net/kmesh/graph/badge.svg?token=0EGQ84FGDU)](https://codecov.io/gh/kmesh-net/kmesh)
